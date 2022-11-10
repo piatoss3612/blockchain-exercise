@@ -2,12 +2,8 @@
 
 pragma solidity ^0.8.4;
 
-contract KryptoBirdz {
-    string public name;
-    string public symbol;
+import "./ERC721Connector.sol";
 
-    constructor() {
-        name = "KryptoBirds";
-        symbol = "KBIRDZ";
-    }
+contract KryptoBirdz is ERC721Connector {
+    constructor() ERC721Connector("KryptoBirds", "KBIRDZ") {}
 }
