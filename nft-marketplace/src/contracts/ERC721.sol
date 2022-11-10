@@ -12,6 +12,12 @@ pragma solidity ^0.8.4;
     e. create an event that emits a transfer log - contract address, where it is being minted to, the id
  */
 contract ERC721 {
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
+
     // Mapping from token id to the owner
     mapping(uint256 => address) private _tokenOwner;
 
@@ -23,7 +29,7 @@ contract ERC721 {
         return owner != address(0);
     }
 
-    function mint(address to, uint256 tokenId) internal {
+    function _mint(address to, uint256 tokenId) internal {
         // requires that the address is not zero
         require(to != address(0), "ERC721: minting to the zero address");
         // requires that the token does not minted yet
@@ -31,5 +37,7 @@ contract ERC721 {
 
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to]++;
+
+        emit Transfer(address(0), to, tokenId);
     }
 }
