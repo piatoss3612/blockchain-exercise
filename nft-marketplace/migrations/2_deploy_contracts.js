@@ -1,4 +1,4 @@
-const KryptoBirdz = artifacts.require("./KriptoBirdz.sol");
+const KryptoBirdz = artifacts.require("./KryptoBirdz.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(KryptoBirdz);
