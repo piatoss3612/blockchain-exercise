@@ -3,8 +3,9 @@
 pragma solidity ^0.8.4;
 
 import "./ERC721.sol";
+import "./interfaces/IERC721Enumerable.sol";
 
-contract ERC721Enumerable is ERC721 {
+contract ERC721Enumerable is IERC721Enumerable, ERC721 {
     uint256[] private _allTokens;
 
     mapping(uint256 => uint256) private _allTokensIndex;
