@@ -46,4 +46,24 @@ contract("KryptoBirdz", async (accounts) => {
       await contract.mint("https...1").should.be.rejected;
     });
   });
+
+  describe("indexing", async () => {
+    it("lists KryptoBirdz", async () => {
+      await contract.mint("https...2");
+      await contract.mint("https...3");
+      await contract.mint("https...4");
+      const totalSupply = await contract.totalSupply();
+
+      let result = [];
+      let KryptoBird;
+
+      for (let i = 0; i < totalSupply; i++) {
+        KryptoBird = await contract.kryptoBirds(i);
+        result.push(KryptoBird);
+      }
+
+      let expected = ["https...1", "https...2", "https...3", "https...4"];
+      assert.equal(result.join(","), expected.join(","));
+    });
+  });
 });
