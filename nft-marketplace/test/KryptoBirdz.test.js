@@ -10,9 +10,12 @@ require("chai")
 contract("KryptoBirdz", async (accounts) => {
   let contract;
 
+  before(async () => {
+    contract = await KryptoBirdz.deployed();
+  });
+
   describe("deployment", async () => {
     it("deployed successfully", async () => {
-      contract = await KryptoBirdz.deployed();
       const address = contract.address;
       assert.notEqual(address, "");
       assert.notEqual(address, null);
@@ -28,6 +31,19 @@ contract("KryptoBirdz", async (accounts) => {
     it("matched symbol", async () => {
       const name = await contract.symbol();
       assert.equal(name, "KBIRDZ");
+    });
+  });
+
+  describe("minting", async () => {
+    it("create a new token", async () => {
+      const result = await contract.mint("https...1");
+      const totalSupply = await contract.totalSupply();
+      assert.equal(totalSupply, 1);
+      const event = result.logs[0].args;
+      assert.equal(event._from, "0x0000000000000000000000000000000000000000");
+      assert.equal(event._to, accounts[0]);
+
+      await contract.mint("https...1").should.be.rejected;
     });
   });
 });
