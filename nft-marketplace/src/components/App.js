@@ -5,6 +5,9 @@ import KryptoBirdz from "../abis/KryptoBirdz.json";
 
 const App = () => {
   const [account, setAccount] = useState("");
+  const [contract, setContract] = useState({});
+  const [totalSupply, setTotalSupply] = useState(0);
+  const [kryptoBirdz, setKryptoBirdz] = useState([]);
 
   const loadWeb3 = async () => {
     const provider = await detectEthereumProvider();
@@ -19,8 +22,29 @@ const App = () => {
 
   const loadBlockChainData = async () => {
     const accounts = await window.web3.eth.getAccounts();
-    console.log(accounts);
     setAccount(accounts[0]);
+
+    const networkId = await window.web3.eth.net.getId();
+    const networkData = KryptoBirdz.networks[networkId];
+    if (networkData) {
+      let abi = KryptoBirdz.abi;
+      let address = networkData.address;
+      let contract = new window.web3.eth.Contract(abi, address);
+      setContract(contract);
+
+      const totalSupply = await contract.methods.totalSupply().call();
+      setTotalSupply(totalSupply);
+
+      let kryptoBirdz;
+      let kryptoBird;
+      for (let i = 0; i < totalSupply; i++) {
+        kryptoBird = await contract.methods.kryptoBirdz(i).call();
+        kryptoBirdz.push(kryptoBird);
+      }
+      setKryptoBirdz(kryptoBirdz);
+    } else {
+      window.alert("Smart Contract not deployed");
+    }
   };
 
   const onComponentMount = async () => {
