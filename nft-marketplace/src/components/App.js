@@ -3,6 +3,14 @@ import Web3 from "web3";
 import detectEthereumProvider from "@metamask/detect-provider";
 import KryptoBirdz from "../abis/KryptoBirdz.json";
 import "./App.css";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+  MDBCardImage,
+  MDBBtn,
+} from "mdb-react-ui-kit";
 
 const App = () => {
   const [account, setAccount] = useState("");
@@ -119,6 +127,32 @@ const App = () => {
               </form>
             </div>
           </main>
+        </div>
+        <hr />
+        <div className="row text-center">
+          {kryptoBirdz.map((kryptoBird, key) => {
+            return (
+              <div key={key}>
+                <div>
+                  <MDBCard className="token img" style={{ maxWidth: "22rem" }}>
+                    <MDBCardImage
+                      src={kryptoBird}
+                      position="top"
+                      style={{ marginRight: "4px" }}
+                    />
+                    <MDBCardBody>
+                      <MDBCardTitle> KryptoBirdz </MDBCardTitle>
+                      <MDBCardText>
+                        The KryptoBirdz are 20 uniquely generated KBirdz from
+                        the cyberpunk cloud galaxy Mystopia!
+                      </MDBCardText>
+                      <MDBBtn href={kryptoBird}>Download</MDBBtn>
+                    </MDBCardBody>
+                  </MDBCard>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
