@@ -76,7 +76,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="container-filled">
       <nav
         className="navbar navbar-dark fixed-top 
                 bg-dark flex-md-nowrap p-0 shadow"
