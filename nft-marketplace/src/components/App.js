@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import detectEthereumProvider from "@metamask/detect-provider";
 import KryptoBirdz from "../abis/KryptoBirdz.json";
+import "./App.css";
 
 const App = () => {
   const [account, setAccount] = useState("");
   const [contract, setContract] = useState({});
   const [totalSupply, setTotalSupply] = useState(0);
   const [kryptoBirdz, setKryptoBirdz] = useState([]);
+  const [kryptoBird, setKryptoBird] = useState("");
 
   const loadWeb3 = async () => {
     const provider = await detectEthereumProvider();
@@ -35,10 +37,10 @@ const App = () => {
       const totalSupply = await contract.methods.totalSupply().call();
       setTotalSupply(totalSupply);
 
-      let kryptoBirdz;
+      let kryptoBirdz = [];
       let kryptoBird;
       for (let i = 0; i < totalSupply; i++) {
-        kryptoBird = await contract.methods.kryptoBirdz(i).call();
+        kryptoBird = await contract.methods.kryptoBirds(i).call();
         kryptoBirdz.push(kryptoBird);
       }
       setKryptoBirdz(kryptoBirdz);
@@ -56,9 +58,21 @@ const App = () => {
     onComponentMount();
   }, []);
 
+  const mint = async (kryptoBird) => {
+    await contract.methods
+      .mint(kryptoBird)
+      .send({ from: account })
+      .once("receipt", (recipt) => {
+        setKryptoBirdz([...kryptoBirdz, kryptoBird]);
+      });
+  };
+
   return (
     <div>
-      <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <nav
+        className="navbar navbar-dark fixed-top 
+                bg-dark flex-md-nowrap p-0 shadow"
+      >
         <div
           className="navbar-brand col-sm-3 col-md-3 mr-0"
           style={{ color: "white" }}
@@ -66,11 +80,47 @@ const App = () => {
           Krypto Birdz NFTs
         </div>
         <ul className="navbar-nav px-3">
-          <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
+          <li
+            className="nav-item text-nowrap
+                d-none d-sm-none d-sm-block
+                "
+          >
             <small className="text-white">{account}</small>
           </li>
         </ul>
       </nav>
+
+      <div className="container-fluid mt-1">
+        <div className="row">
+          <main role="main" className="col-lg-12 d-flex text-center">
+            <div className="content mr-auto ml-auto" style={{ opacity: "0.8" }}>
+              <h1 style={{ color: "black" }}>KryptoBirdz NFT Marketplace</h1>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  mint(kryptoBird);
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="add file location"
+                  className="form-control mb-1"
+                  onChange={(event) => {
+                    event.preventDefault();
+                    setKryptoBird(event.target.value);
+                  }}
+                />
+                <input
+                  style={{ margin: "6px" }}
+                  type="submit"
+                  className="btn btn-primary btn-black"
+                  value="MINT"
+                />
+              </form>
+            </div>
+          </main>
+        </div>
+      </div>
     </div>
   );
 };
