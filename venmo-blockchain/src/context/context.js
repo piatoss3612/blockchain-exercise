@@ -121,28 +121,19 @@ export const TransactionProvider = ({ children }) => {
   const sendTransaction = async () => {
     try {
       if (ethereum) {
+        setIsLoading(true);
         const transactionsContract = createEthereumContract();
         const parsedAmount = ethers.utils.parseEther(amount);
 
-        await ethereum.request({
-          method: "eth_sendTransaction",
-          params: [
-            {
-              from: currentAccount,
-              to: addressTo,
-              gas: "0x5208",
-              value: parsedAmount._hex,
-            },
-          ],
-        });
-
-        const transactionHash = await transactionsContract.addToBlockchain(
+        const transactionHash = await transactionsContract.transfer(
           addressTo,
           parsedAmount,
-          message
+          message,
+          {
+            value: parsedAmount,
+          }
         );
 
-        setIsLoading(true);
         console.log(`Loading - ${transactionHash.hash}`);
         await transactionHash.wait();
         console.log(`Success - ${transactionHash.hash}`);
@@ -151,11 +142,12 @@ export const TransactionProvider = ({ children }) => {
         const transactionCount =
           await transactionsContract.getTransactionCount();
         setTransactionCount(transactionCount.toNumber());
-        window.location.reload();
+        // window.location.reload();
       } else {
         console.log("no ethereum object found");
       }
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -183,6 +175,7 @@ export const TransactionProvider = ({ children }) => {
         setMessage,
         message,
         transactions,
+        isLoading,
       }}
     >
       {children}
